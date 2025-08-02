@@ -1,0 +1,10 @@
+#include <iostream>
+#include <SDL3/SDL.h>
+#include "game.h"
+
+int main(){
+    Game game;
+    game.start();
+
+    return 0;
+}

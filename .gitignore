@@ -1,0 +1,6 @@
+Makefile
+.vscode/
+*.txt
+*.exe
+*.o
+*.dll
