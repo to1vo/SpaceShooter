@@ -1,3 +1,5 @@
+// Toivo Lindholm
+
 #include <iostream>
 #include "player.h"
 #include "game.h"

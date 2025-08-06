@@ -1,9 +1,10 @@
+// Toivo Lindholm 2025
+
 #include <iostream>
 #include <windows.h>
 #include <filesystem>
 #include <SDL3/SDL_init.h>
 #include <SDL3_image/SDL_image.h>
-#include <SDL3_ttf/SDL_ttf.h>
 #include "game.h"
 
 //STATICS
@@ -96,6 +97,8 @@ void Game::init_sdl(){
         std::cout << "Failed to initialize SDL_TTF";
         exit(1);
     }
+
+    text_engine = TTF_CreateRendererTextEngine(renderer);
     
     if(window == nullptr){
         std::cout << "Failed to create window";
@@ -111,15 +114,17 @@ void Game::init_sdl(){
 //initializes the game (all objects etc.)
 void Game::init(){  
     //Open the font
-    font = TTF_OpenFont("../VT323-Regular.ttf", 30);
-    if(!font){
+    score_font = TTF_OpenFont("fonts/VT323-Regular.ttf", 30);
+    if(!score_font){
         std::cout << "Failed to open font"; 
         exit(1);
     } 
-
+    
+    update_score_text();
+    
     std::array<int, 5> player_1_keys = {119, 97, 115, 100, 32};
     player = Player(100, 150, 32, 32, 2, 100, "rectangle", player_1_keys, this);
-    //create all textures
+    //create all textures (?)
 }
 
 //reads all input
@@ -196,9 +201,9 @@ void Game::draw(){
     for(int i=0; i<projectiles.size(); i++){
         draw_sprite(projectiles[i]);
     }
-
-    //ui
     
+    //ui
+    TTF_DrawRendererText(score_text, 100, 50);
 }
 
 //functionality for individual render
@@ -260,7 +265,14 @@ void Game::remove_projectile(int id){
     std::cout << "Projectile destroyed" << std::endl;
 }
 
-//increases the score
-void Game::add_score(int amount){
+//increases the score by given amount
+void Game::update_score(int amount){
     score += amount;
+    update_score_text();
+}
+
+//updates the score_text object
+void Game::update_score_text(){
+    std::string score_text_str = "Score: "+std::to_string(score);
+    score_text = TTF_CreateText(text_engine, score_font, score_text_str.c_str(), 0);
 }

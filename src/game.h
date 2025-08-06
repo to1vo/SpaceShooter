@@ -1,3 +1,5 @@
+// Toivo Lindholm 2025
+
 #ifndef GAME_H
 #define GAME_H
 #define SCREEN_WIDTH 480
@@ -23,7 +25,7 @@ class Game {
         void add_projectile(GameObject* obj);
         void remove_enemy(int id);
         void remove_projectile(int id);
-        void add_score(int amount);
+        void update_score(int amount);
 
         static SDL_Texture* load_texture(const std::string& filename, SDL_Renderer* renderer);
         static bool key_is_pressed(int key);
@@ -37,7 +39,9 @@ class Game {
         std::vector<GameObject*> enemies;
         std::vector<GameObject*> projectiles;
         Player player;
-        TTF_Font* font;
+        TTF_Font* score_font;
+        TTF_TextEngine* text_engine;
+        TTF_Text* score_text;
 
         void init_sdl();
         void init();
@@ -51,6 +55,7 @@ class Game {
         void draw_sprite(GameObject* obj);
         void update();
         void game_loop();
+        void update_score_text();
 };
 
 #endif

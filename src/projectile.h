@@ -1,3 +1,5 @@
+// Toivo Lindholm 2025
+
 #ifndef PROJECTILE_H
 #define PROJECTILE_H
 #include "gameobject.h"

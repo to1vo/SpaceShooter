@@ -1,3 +1,5 @@
+// Toivo Lindholm 2025
+
 #include "gameobject.h"
 #include "game.h"
 

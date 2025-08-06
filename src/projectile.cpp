@@ -1,3 +1,5 @@
+// Toivo Lindholm 2025
+
 #include <iostream>
 #include "projectile.h"
 #include "game.h"

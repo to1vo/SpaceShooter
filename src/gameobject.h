@@ -1,3 +1,5 @@
+// Toivo Lindholm 2025
+
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 #include <SDL3/SDL.h>
