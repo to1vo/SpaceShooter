@@ -1,5 +1,6 @@
 // Toivo Lindholm 2025
 
+#include <iostream>
 #include "enemy.h"
 #include "game.h"
 
@@ -7,6 +8,7 @@ Enemy::Enemy(float x, float y, float w, float h, int speed, int damage, int heal
     this->speed = speed;
     this->damage = damage;
     this->health = health;
+    std::cout << "ENEMY CREATED" << std::endl;
 }
 
 //update timer
@@ -17,7 +19,9 @@ void Enemy::update(float& time){
         }
     } else {
         destroy();
+        return;
     }
+    move();
 }
 
 //move down

@@ -124,7 +124,7 @@ void Game::init(){
     
     std::array<int, 5> player_1_keys = {119, 97, 115, 100, 32};
     player = Player(100, 150, 32, 32, 2, 100, "rectangle", player_1_keys, this);
-    //create all textures (?)
+    enemy_spawner = EnemySpawner(-40, this);
 }
 
 //reads all input
@@ -197,12 +197,18 @@ void Game::display(){
 void Game::draw(){
     //player
     draw_sprite(&player);
-    //other gameobjects
+    
+    //projectiles
     for(int i=0; i<projectiles.size(); i++){
         draw_sprite(projectiles[i]);
     }
     
-    //ui
+    //enemies
+    for(int i=0; i<enemies.size(); i++){
+        draw_sprite(enemies[i]);
+    }
+
+    //UI
     TTF_DrawRendererText(score_text, 100, 50);
 }
 
@@ -220,11 +226,19 @@ void Game::draw_sprite(GameObject* obj){
 //update the states of objects
 void Game::update(){
     //player
-    // std::cout << time << std::endl;
     player.update(time);
-    //other gameobjects
+    
+    //spawners
+    enemy_spawner.update(time);
+    
+    //projectiles
     for(int i=0; i<projectiles.size(); i++){
         projectiles[i]->update(time);
+    }
+    
+    //enemies
+    for(int i=0; i<enemies.size(); i++){
+        enemies[i]->update(time);
     }
 }
 
@@ -259,6 +273,7 @@ void Game::add_projectile(GameObject* obj){
 
 void Game::remove_enemy(int id){
     enemies.erase(enemies.begin()+id);
+    std::cout << "Enemy destroyed" << std::endl;
 }
 void Game::remove_projectile(int id){
     projectiles.erase(projectiles.begin()+id);

@@ -11,6 +11,7 @@
 #include <SDL3_ttf/SDL_ttf.h>
 #include "player.h"
 #include "gameobject.h"
+#include "enemy_spawner.h"
 
 class Game {
     public:
@@ -39,6 +40,7 @@ class Game {
         std::vector<GameObject*> enemies;
         std::vector<GameObject*> projectiles;
         Player player;
+        EnemySpawner enemy_spawner;
         TTF_Font* score_font;
         TTF_TextEngine* text_engine;
         TTF_Text* score_text;

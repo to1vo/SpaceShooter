@@ -12,7 +12,7 @@ class Enemy : public GameObject {
     private:
         int speed, damage, health; 
         int destroy_time = 10;
-        float destroy_timer = destroy_time;
+        float destroy_timer = 0;
 
         void move();
         void destroy();

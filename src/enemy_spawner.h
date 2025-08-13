@@ -2,14 +2,16 @@
 
 #ifndef ENEMY_SPAWNER_H
 #define ENEMY_SPAWNER_H
-#include "game.h"
+
+class Game;
 
 class EnemySpawner {
     public: 
-        void update_spawner(float& time);
+        void update(float& time);
 
-        EnemySpawner(int y);
-    private:
+        EnemySpawner();
+        EnemySpawner(int y, Game* game_manager);
+    private:    
         int y;
         int spawn_cooldown_time = 3;
         float spawn_cooldown_timer = spawn_cooldown_time;
