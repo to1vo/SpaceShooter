@@ -53,25 +53,6 @@ int Game::get_key_position(int key){
     return -1;
 }
 
-//checks the collision between two objects
-//returns the id of the object_2
-//IS GAME_MANAGER AS AN ARGUMENT NEEDED???
-int Game::is_colliding_top(Game& game_manager, GameObject& obj_1, GameObject& obj_2){
-    //in range x axis
-    if((obj_2.x > (obj_1.x+obj_1.width)) || (obj_2.x < obj_1.x && (obj_2.x+obj_2.width) < obj_1.x)){
-        return -1;
-    }
-    if((obj_2.y+obj_2.height) >= obj_1.y && obj_2.y < obj_1.y){
-        return obj_2.id;
-    }
-    return -1;    
-    
-    //in range y axis
-    if(obj_2.y > (obj_1.y+obj_1.height) || (obj_2.y+obj_2.height) < obj_1.y){
-        return -1;
-    }
-}
-
 
 Game::Game(){
     std::cout << "Game started" << std::endl;
@@ -209,7 +190,7 @@ void Game::draw(){
     }
 
     //UI
-    TTF_DrawRendererText(score_text, 100, 50);
+    TTF_DrawRendererText(score_text, SCREEN_WIDTH-125, 20);
 }
 
 //functionality for individual render

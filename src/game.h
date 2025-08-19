@@ -17,6 +17,9 @@ class Game {
     public:
         static std::vector<int> keys_pressed;
         static SDL_Renderer* renderer;
+
+        std::vector<GameObject*> enemies;
+        std::vector<GameObject*> projectiles;
         
         Game();
         void start();
@@ -31,14 +34,11 @@ class Game {
         static SDL_Texture* load_texture(const std::string& filename, SDL_Renderer* renderer);
         static bool key_is_pressed(int key);
         static int get_key_position(int key);
-        static int is_colliding_top(Game& game_manager, GameObject& obj_1, GameObject& obj_2);
 
     private:
-        int score;
+        int score = 0;
         SDL_Window* window;
         float time, frames;
-        std::vector<GameObject*> enemies;
-        std::vector<GameObject*> projectiles;
         Player player;
         EnemySpawner enemy_spawner;
         TTF_Font* score_font;
