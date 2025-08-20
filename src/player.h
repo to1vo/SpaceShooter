@@ -12,6 +12,7 @@ class Player : public GameObject {
         Player();
         Player(float x, float y, float w, float h, float speed, float maxHealth, std::string sprite, std::array<int, 5> keys, Game* game_manager);    
         void update(float& time) override;
+        void take_damage(int amount);
 
     private:
         float speed, health, maxHealth, shoot_cooldown_timer = 1;

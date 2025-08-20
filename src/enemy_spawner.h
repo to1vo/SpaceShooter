@@ -5,6 +5,7 @@
 
 class Game;
 
+
 class EnemySpawner {
     public: 
         void update(float& time);

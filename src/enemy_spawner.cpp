@@ -1,11 +1,14 @@
 // Toivo Lindholm 2025
 
+#include <ctime>
+#include <cstdlib>
 #include "enemy_spawner.h"
 #include "enemy.h"
 #include "game.h"
 
 EnemySpawner::EnemySpawner(){};
 EnemySpawner::EnemySpawner(int y, Game* game_manager){
+    srand(time(0));
     this->y = y;
     this->game_manager = game_manager;
 }
@@ -24,5 +27,6 @@ void EnemySpawner::update(float& time){
 
 //adds new enemy to enemy-vector of gamemanager
 void EnemySpawner::spawn_enemy(){
-    game_manager->add_enemy(new Enemy(50, y, 35, 35, 2, 50, 100, "rectangle-red", game_manager));       
+    int x_position = 50 + rand() % (SCREEN_WIDTH-50+1);
+    game_manager->add_enemy(new Enemy(x_position, y, 35, 35, 2, 50, 100, "rectangle-red", game_manager));       
 }

@@ -64,6 +64,13 @@ void Game::start(){
     game_loop();
 }
 
+void Game::game_over(){
+    running = false;
+    // score = 0;
+    // enemies.clear();
+    // projectiles.clear();
+}
+
 //initialize SDL stuff
 void Game::init_sdl(){
     window = SDL_CreateWindow("Space Game", SCREEN_WIDTH, SCREEN_HEIGHT, 0);
@@ -225,13 +232,19 @@ void Game::update(){
 
 void Game::game_loop(){
     while(true){
-        setup_renderer();
+        if(running){
+            setup_renderer();
+            read_input();
+            update();
+            calculate_time(time);
+            draw();
+            display();        
+            SDL_Delay(16);  
+
+            continue;
+        } 
+
         read_input();
-        update();
-        calculate_time(time);
-        draw();
-        display();        
-        
         SDL_Delay(16);
     }
 }
@@ -245,10 +258,10 @@ int Game::get_new_projectile_id(){
 }
 
 //adds an object to the list of gameobjects
-void Game::add_enemy(GameObject* obj){
+void Game::add_enemy(Enemy* obj){
     enemies.push_back(obj);
 }
-void Game::add_projectile(GameObject* obj){
+void Game::add_projectile(Projectile* obj){
     projectiles.push_back(obj);
 }
 

@@ -26,7 +26,7 @@ void Projectile::update(float& time){
     for(int i=game_manager->enemies.size()-1; i>-1; i--){
         int enemy_id = Collision::is_colliding_top(*this, *game_manager->enemies[i]);
         if(enemy_id != -1){
-            game_manager->remove_enemy(enemy_id);
+            game_manager->enemies[i]->take_damage(damage);
             game_manager->update_score(10);      
             destroy();  
         }    

@@ -12,21 +12,24 @@
 #include "player.h"
 #include "gameobject.h"
 #include "enemy_spawner.h"
+#include "enemy.h"
+#include "projectile.h"
 
 class Game {
     public:
         static std::vector<int> keys_pressed;
         static SDL_Renderer* renderer;
 
-        std::vector<GameObject*> enemies;
-        std::vector<GameObject*> projectiles;
+        std::vector<Enemy*> enemies;
+        std::vector<Projectile*> projectiles;
         
         Game();
         void start();
+        void game_over();
         int get_new_enemy_id();
         int get_new_projectile_id();
-        void add_enemy(GameObject* obj);
-        void add_projectile(GameObject* obj);
+        void add_enemy(Enemy* obj);
+        void add_projectile(Projectile* obj);
         void remove_enemy(int id);
         void remove_projectile(int id);
         void update_score(int amount);
@@ -37,6 +40,7 @@ class Game {
 
     private:
         int score = 0;
+        bool running = true;
         SDL_Window* window;
         float time, frames;
         Player player;

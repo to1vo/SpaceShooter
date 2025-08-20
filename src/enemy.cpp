@@ -29,6 +29,14 @@ void Enemy::move(){
     y += speed;
 }
 
+void Enemy::take_damage(int amount){
+    std::cout << "TAKING DAMAGE " << amount << std::endl;
+    health -= amount;
+    if(health <= 0){
+        destroy();
+    }
+}
+
 //removes itself from the container vector
 void Enemy::destroy(){
     game_manager->remove_enemy(id);
