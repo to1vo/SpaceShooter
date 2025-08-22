@@ -13,15 +13,12 @@ Enemy::Enemy(float x, float y, float w, float h, int speed, int damage, int heal
 
 //update timer
 void Enemy::update(float& time){
-    if(destroy_timer < destroy_time){
-        if(time == 1){
-            destroy_timer += 1;
-        }
-    } else {
+    if(destroy_timer > destroy_time){
         destroy();
         return;
     }
     move();
+    destroy_timer += time;
 }
 
 //move down
@@ -30,7 +27,7 @@ void Enemy::move(){
 }
 
 void Enemy::take_damage(int amount){
-    std::cout << "TAKING DAMAGE " << amount << std::endl;
+    std::cout << "ENEMY TAKING DAMAGE " << amount << std::endl;
     health -= amount;
     if(health <= 0){
         destroy();

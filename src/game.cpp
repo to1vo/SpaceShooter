@@ -64,8 +64,8 @@ void Game::start(){
     game_loop();
 }
 
-void Game::game_over(){
-    running = false;
+void Game::set_game_over(){
+    game_over = true;
     // score = 0;
     // enemies.clear();
     // projectiles.clear();
@@ -110,8 +110,9 @@ void Game::init(){
     
     update_score_text();
     
-    std::array<int, 5> player_1_keys = {119, 97, 115, 100, 32};
-    player = Player(100, 150, 32, 32, 2, 100, "rectangle", player_1_keys, this);
+    delta_time = 1 / 62.0;
+    std::array<int, 5> player_keys = {119, 97, 115, 100, 32};
+    player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT-100, 32, 32, 3, 100, "rectangle", player_keys, this);
     enemy_spawner = EnemySpawner(-40, this);
 }
 
@@ -161,15 +162,6 @@ void Game::handle_key_up(SDL_KeyboardEvent& event){
     }
 }
 
-void Game::calculate_time(float& last_time){
-    if(frames == 62) {
-        frames = 0;
-        time = 0;
-    }
-    frames++;
-    time = (frames/62);
-}
-
 //setup the renderer for drawing
 void Game::setup_renderer() {
     SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
@@ -214,29 +206,28 @@ void Game::draw_sprite(GameObject* obj){
 //update the states of objects
 void Game::update(){
     //player
-    player.update(time);
+    player.update(delta_time);
     
     //spawners
-    enemy_spawner.update(time);
+    enemy_spawner.update(delta_time);
     
     //projectiles
     for(int i=0; i<projectiles.size(); i++){
-        projectiles[i]->update(time);
+        projectiles[i]->update(delta_time);
     }
     
     //enemies
     for(int i=0; i<enemies.size(); i++){
-        enemies[i]->update(time);
+        enemies[i]->update(delta_time);
     }
 }
 
 void Game::game_loop(){
     while(true){
-        if(running){
+        if(!game_over){
             setup_renderer();
             read_input();
             update();
-            calculate_time(time);
             draw();
             display();        
             SDL_Delay(16);  
@@ -251,6 +242,7 @@ void Game::game_loop(){
 
 //returns new id for gameobject
 int Game::get_new_enemy_id(){
+    // std::cout << "NEW ID RECEIVED: " << enemies.size() << std::endl;
     return enemies.size();
 }
 int Game::get_new_projectile_id(){
@@ -266,12 +258,24 @@ void Game::add_projectile(Projectile* obj){
 }
 
 void Game::remove_enemy(int id){
-    enemies.erase(enemies.begin()+id);
-    std::cout << "Enemy destroyed" << std::endl;
+    for(int i=enemies.size()-1; i > -1; i--){
+        if(enemies[i]->id == id){
+            delete enemies[i];
+            enemies.erase(enemies.begin()+i);
+            std::cout << "Enemy destroyed" << std::endl;
+            break;
+        }
+    }
 }
 void Game::remove_projectile(int id){
-    projectiles.erase(projectiles.begin()+id);
-    std::cout << "Projectile destroyed" << std::endl;
+    for(int i=enemies.size()-1; i > -1; i--){
+        if(projectiles[i]->id == id){
+            delete projectiles[i];
+            projectiles.erase(projectiles.begin()+i);
+            std::cout << "Projectile destroyed" << std::endl;
+            break;
+        }
+    }
 }
 
 //increases the score by given amount

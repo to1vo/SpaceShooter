@@ -1,5 +1,6 @@
 // Toivo Lindholm 2025
 
+#include <iostream>
 #include "gameobject.h"
 #include "game.h"
 

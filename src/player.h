@@ -21,6 +21,7 @@ class Player : public GameObject {
 
         void check_movement_keys();
         void check_action_keys();
+        void check_collisions();
         void move_up();
         void move_left();
         void move_down();

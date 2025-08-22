@@ -14,19 +14,16 @@ EnemySpawner::EnemySpawner(int y, Game* game_manager){
 }
 
 void EnemySpawner::update(float& time){
-    if(spawn_cooldown_timer < spawn_cooldown_time){
-        if(time == 1){
-            spawn_cooldown_timer += 1;
-        }
-    } else {
+    if(spawn_cooldown_timer > spawn_cooldown_time){
         spawn_enemy();
         //reset the timer 
         spawn_cooldown_timer = 0;
-    }    
+    }
+    spawn_cooldown_timer += time;
 }
 
 //adds new enemy to enemy-vector of gamemanager
 void EnemySpawner::spawn_enemy(){
-    int x_position = 50 + rand() % (SCREEN_WIDTH-50+1);
+    int x_position = 50 + rand() % (SCREEN_WIDTH-100+1);
     game_manager->add_enemy(new Enemy(x_position, y, 35, 35, 2, 50, 100, "rectangle-red", game_manager));       
 }

@@ -25,7 +25,7 @@ class Game {
         
         Game();
         void start();
-        void game_over();
+        void set_game_over();
         int get_new_enemy_id();
         int get_new_projectile_id();
         void add_enemy(Enemy* obj);
@@ -40,9 +40,9 @@ class Game {
 
     private:
         int score = 0;
-        bool running = true;
+        bool game_over = false;
         SDL_Window* window;
-        float time, frames;
+        float delta_time, frames;
         Player player;
         EnemySpawner enemy_spawner;
         TTF_Font* score_font;
@@ -54,7 +54,6 @@ class Game {
         void read_input();
         void handle_key_down(SDL_KeyboardEvent& event);
         void handle_key_up(SDL_KeyboardEvent& event);
-        void calculate_time(float& last_time);
         void setup_renderer();
         void display();
         void draw();

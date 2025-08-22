@@ -14,7 +14,7 @@ class EnemySpawner {
         EnemySpawner(int y, Game* game_manager);
     private:    
         int y;
-        int spawn_cooldown_time = 3;
+        int spawn_cooldown_time = 2;
         float spawn_cooldown_timer = spawn_cooldown_time;
         Game* game_manager;
 
