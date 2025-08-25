@@ -98,7 +98,7 @@ void Player::take_damage(int amount){
 void Player::shoot(){
     if(can_shoot()){
         std::cout << "SHOOTING" << std::endl;
-        game_manager->add_projectile(new Projectile(x, y, 5, 5, 5, 50, "rectangle-green", game_manager));
+        game_manager->add_projectile(new Projectile(x, y, 5, 5, 7, 50, "rectangle-green", game_manager));
         shoot_cooldown_timer = 0;
     }
 }

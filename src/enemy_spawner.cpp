@@ -1,5 +1,6 @@
 // Toivo Lindholm 2025
 
+#include <iostream>
 #include <ctime>
 #include <cstdlib>
 #include "enemy_spawner.h"

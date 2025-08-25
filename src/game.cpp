@@ -258,21 +258,22 @@ void Game::add_projectile(Projectile* obj){
 }
 
 void Game::remove_enemy(int id){
-    for(int i=enemies.size()-1; i > -1; i--){
+    for(int i=(int)enemies.size()-1; i > -1; i--){
         if(enemies[i]->id == id){
             delete enemies[i];
             enemies.erase(enemies.begin()+i);
-            std::cout << "Enemy destroyed" << std::endl;
+            std::cout << "ENEMY DESTROYED" << std::endl;
             break;
         }
     }
 }
+
 void Game::remove_projectile(int id){
-    for(int i=enemies.size()-1; i > -1; i--){
+    for(int i=(int)projectiles.size()-1; i > -1; i--){
         if(projectiles[i]->id == id){
             delete projectiles[i];
             projectiles.erase(projectiles.begin()+i);
-            std::cout << "Projectile destroyed" << std::endl;
+            std::cout << "PROJECTILE DESTROYED" << std::endl;
             break;
         }
     }

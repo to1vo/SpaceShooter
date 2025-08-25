@@ -20,7 +20,7 @@ bool Collision::is_colliding_top(GameObject& obj_1, GameObject& obj_2){
             return true;
         }
     }
-    return false; 
+    return false;
 }
 
 bool Collision::is_colliding_down(GameObject& obj_1, GameObject& obj_2){
