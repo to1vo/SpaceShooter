@@ -8,7 +8,7 @@ class Game;
 
 class EnemySpawner {
     public: 
-        void update(float& time);
+        void update(float time);
 
         EnemySpawner();
         EnemySpawner(int y, Game* game_manager);

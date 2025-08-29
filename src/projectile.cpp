@@ -12,7 +12,7 @@ Projectile::Projectile(float x, float y, float w, float h, float speed, float da
     std::cout << "PROJECTILE CREATED" << std::endl;
 }
 
-void Projectile::update(float& time){
+void Projectile::update(float time){
     if(destroy_timer >= destroy_time){
         destroy();
         return;

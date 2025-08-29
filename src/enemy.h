@@ -7,7 +7,7 @@
 class Enemy : public GameObject {
     public:
         Enemy(float x, float y, float w, float h, int speed, int damage, int health, std::string sprite, Game* game_manager);    
-        void update(float& time) override;
+        void update(float time) override;
         void take_damage(int amount);
 
         int damage;

@@ -2,8 +2,13 @@
 
 #ifndef GAME_H
 #define GAME_H
+
 #define SCREEN_WIDTH 480
 #define SCREEN_HEIGHT 350
+#define FPS 62
+#define DELTA_TIME (1/FPS)
+#define DELAY_MS 16
+
 #include <vector>
 #include <array>
 #include <string>
@@ -17,7 +22,7 @@
 
 class Game {
     public:
-        static std::vector<int> keys_pressed;
+        static std::vector<SDL_Keycode> keys_pressed;
         static SDL_Renderer* renderer;
 
         std::vector<Enemy*> enemies;
@@ -35,14 +40,13 @@ class Game {
         void update_score(int amount);
 
         static SDL_Texture* load_texture(const std::string& filename, SDL_Renderer* renderer);
-        static bool key_is_pressed(int key);
-        static int get_key_position(int key);
+        static bool key_is_pressed(const SDL_Keycode& keycode);
+        static int get_key_position(const SDL_Keycode& keycode);
 
     private:
         int score = 0;
         bool game_over = false;
         SDL_Window* window;
-        float delta_time, frames;
         Player player;
         EnemySpawner enemy_spawner;
         TTF_Font* score_font;
@@ -52,15 +56,16 @@ class Game {
         void init_sdl();
         void init();
         void read_input();
-        void handle_key_down(SDL_KeyboardEvent& event);
-        void handle_key_up(SDL_KeyboardEvent& event);
-        void setup_renderer();
-        void display();
+        void handle_key_down(const SDL_Keycode& keycode);
+        void handle_key_up(const SDL_Keycode& keycode);
+        void clear_renderer();
+        void update_renderer();
         void draw();
         void draw_sprite(GameObject* obj);
         void update();
         void game_loop();
         void update_score_text();
+        void reset();
 };
 
 #endif

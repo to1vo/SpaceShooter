@@ -7,11 +7,13 @@
 #include <SDL3_image/SDL_image.h>
 #include "game.h"
 
-//STATICS
-std::vector<int> Game::keys_pressed = {};
+// *********************************
+//GAME_MANAGER STATIC VARIABLES AND FUNCTIONS
+std::vector<SDL_Keycode> Game::keys_pressed = {};
 SDL_Renderer* Game::renderer = nullptr;
 
-//loads a texture from given asset
+//loads a texture from given asset filename with no extension needed (expects png)
+//returns the texture or if failed -> NULL
 SDL_Texture* Game::load_texture(const std::string& filename, SDL_Renderer* renderer) {
     SDL_Texture* texture;
     char path[MAX_PATH];
@@ -32,46 +34,40 @@ SDL_Texture* Game::load_texture(const std::string& filename, SDL_Renderer* rende
     return texture;
 }
 
-//check if key is already in the vector
-bool Game::key_is_pressed(int key){
+//checks if a given key is pressed
+bool Game::key_is_pressed(const SDL_Keycode& keycode){
     for(int i=0; i<Game::keys_pressed.size(); i++){
-        if(Game::keys_pressed[i] == key){
+        if(Game::keys_pressed[i] == keycode){
             return true;
         }
     }
     return false;
 }
 
-//get the index of key in the vector
-//does not exist -> -1
-int Game::get_key_position(int key){
+//gives the index of key in the vector of pressed keys
+//does not exist (not pressed) -> -1
+int Game::get_key_position(const SDL_Keycode& keycode){
     for(int i=0; i<Game::keys_pressed.size(); i++){
-        if(Game::keys_pressed[i] == key){
+        if(Game::keys_pressed[i] == keycode){
             return i;
         }
     }
     return -1;
 }
+// *********************************
 
 
-Game::Game(){
-    std::cout << "Game started" << std::endl;
-}
+
+Game::Game(){}
 
 void Game::start(){
+    std::cout << "Game started" << std::endl;
     init_sdl();
     init();
     game_loop();
 }
 
-void Game::set_game_over(){
-    game_over = true;
-    // score = 0;
-    // enemies.clear();
-    // projectiles.clear();
-}
-
-//initialize SDL stuff
+//initializes SDL
 void Game::init_sdl(){
     window = SDL_CreateWindow("Space Game", SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     Game::renderer = SDL_CreateRenderer(window, NULL);
@@ -99,81 +95,130 @@ void Game::init_sdl(){
     }
 }
 
-//initializes the game (all objects etc.)
+//initializes the game
 void Game::init(){  
-    //Open the font
+    //open the font(s)
     score_font = TTF_OpenFont("fonts/VT323-Regular.ttf", 30);
     if(!score_font){
         std::cout << "Failed to open font"; 
         exit(1);
     } 
     
-    update_score_text();
+    //initializing the player
+    //first 4 keys for movement last one for action
+    std::array<int, 5> player_keys = {SDLK_W, SDLK_A, SDLK_S, SDLK_D, SDLK_SPACE};
+    int player_x = SCREEN_WIDTH/2;
+    int player_y = SCREEN_HEIGHT-100;
+    int player_width = 32;
+    int player_height = 32;
+    int player_speed = 3;
+    int player_maxhealth = 100;
+    std::string player_sprite = "rectangle";
+
+    player = Player(player_x, player_y, player_width, player_height, player_speed, 
+    player_maxhealth, "rectangle", player_keys, this);
     
-    delta_time = 1 / 62.0;
-    std::array<int, 5> player_keys = {119, 97, 115, 100, 32};
-    player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT-100, 32, 32, 3, 100, "rectangle", player_keys, this);
-    enemy_spawner = EnemySpawner(-40, this);
+    int enemy_spawner_y = -40;
+    enemy_spawner = EnemySpawner(enemy_spawner_y, this);
+
+    update_score_text();
 }
 
-//reads all input
+//the main game loop
+void Game::game_loop(){
+    while(true){
+        //GAME_OVER CHECKING SHOULD BE MOVED TO UPDATE!!
+        //GAME_LOOP SHOULD STAY THE SAME!!
+        if(!game_over){
+            clear_renderer();
+            read_input();
+            update();
+            draw();
+            update_renderer();        
+            SDL_Delay(DELAY_MS);  
+
+            continue;
+        } 
+
+        read_input();
+        SDL_Delay(DELAY_MS);
+    }
+}
+
+//reads user input
 void Game::read_input(){
     SDL_Event event;
     
     while(SDL_PollEvent(&event)){
         switch(event.type){
             case SDL_EVENT_QUIT:
-            exit(0);
-            break;
+                exit(0);
+                break;
             case SDL_EVENT_KEY_DOWN:
-            handle_key_down(event.key);
-            break;
+                if(event.key.repeat == 0){
+                    handle_key_down(event.key.key);
+                }
+                break;
             case SDL_EVENT_KEY_UP:
-            handle_key_up(event.key);
-            break;
+                if(event.key.repeat == 0){
+                    handle_key_up(event.key.key);
+                }
+                break;
             default:
-            break;
+                break;
         }
     }
 }
 
-//handles key pressed
-void Game::handle_key_down(SDL_KeyboardEvent& event){
-    //add key to the vector of keys_pressed
+//handles a key being pressed
+//adds key to the vector keys_pressed
+void Game::handle_key_down(const SDL_Keycode& keycode){
     //if it does not already exist
-    if(event.repeat == 0){
-        if(!key_is_pressed(event.key)){
-            Game::keys_pressed.push_back(event.key);
-            // std::cout << event.key << std::endl;
-        }
+    if(!key_is_pressed(keycode)){
+        Game::keys_pressed.push_back(keycode);
+        // std::cout << event.key << std::endl;
     }
 }
 
-//handles key released
-void Game::handle_key_up(SDL_KeyboardEvent& event){
-    //remove key from the vector of keys pressed
-    //if it exists in there
-    if(event.repeat == 0){
-        int index = get_key_position(event.key);
-        if(index != -1){
-            Game::keys_pressed.erase(Game::keys_pressed.begin()+index);
-            // std::cout << event.key << std::endl;
-        }
+//handles a key being released
+//remove key from the vector keys pressed
+void Game::handle_key_up(const SDL_Keycode& keycode){
+    int index = get_key_position(keycode);
+    //if it exists
+    if(index != -1){
+        Game::keys_pressed.erase(Game::keys_pressed.begin()+index);
+        // std::cout << event.key << std::endl;
     }
 }
 
-//setup the renderer for drawing
-void Game::setup_renderer() {
+void Game::clear_renderer() {
     SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
     SDL_RenderClear(Game::renderer);
 }
 
-//display
-void Game::display(){
+void Game::update_renderer(){
     SDL_RenderPresent(Game::renderer);
 }
 
-//main draw function
+//update the states of gameobjects
+void Game::update(){
+    //player
+    player.update(DELTA_TIME);
+    
+    //spawner(s)
+    enemy_spawner.update(DELTA_TIME);
+    
+    //projectiles
+    for(int i=0; i<projectiles.size(); i++){
+        projectiles[i]->update(DELTA_TIME);
+    }
+    
+    //enemies
+    for(int i=0; i<enemies.size(); i++){
+        enemies[i]->update(DELTA_TIME);
+    }
+}
+
 void Game::draw(){
     //player
     draw_sprite(&player);
@@ -192,7 +237,7 @@ void Game::draw(){
     TTF_DrawRendererText(score_text, SCREEN_WIDTH-125, 20);
 }
 
-//functionality for individual render
+//draws a single gameobject
 void Game::draw_sprite(GameObject* obj){
     SDL_FRect dest; 
     dest.x = obj->x;
@@ -203,56 +248,47 @@ void Game::draw_sprite(GameObject* obj){
     SDL_RenderTexture(Game::renderer, obj->texture, NULL, &dest);
 }
 
-//update the states of objects
-void Game::update(){
-    //player
-    player.update(delta_time);
-    
-    //spawners
-    enemy_spawner.update(delta_time);
-    
-    //projectiles
-    for(int i=0; i<projectiles.size(); i++){
-        projectiles[i]->update(delta_time);
-    }
-    
-    //enemies
-    for(int i=0; i<enemies.size(); i++){
-        enemies[i]->update(delta_time);
-    }
+//increases the score by given amount
+void Game::update_score(int amount){
+    score += amount;
+    update_score_text();
 }
 
-void Game::game_loop(){
-    while(true){
-        if(!game_over){
-            setup_renderer();
-            read_input();
-            update();
-            draw();
-            display();        
-            SDL_Delay(16);  
-
-            continue;
-        } 
-
-        read_input();
-        SDL_Delay(16);
-    }
+//updates the score_text with current score
+void Game::update_score_text(){
+    std::string score_text_str = "Score: "+std::to_string(score);
+    score_text = TTF_CreateText(text_engine, score_font, score_text_str.c_str(), 0);
 }
 
-//returns new id for gameobject
+void Game::set_game_over(){
+    game_over = true;
+}
+
+// TODO
+//sets the game back to initial state
+void Game::reset(){
+    // score = 0;
+    // enemies.clear();
+    // projectiles.clear();
+}
+
+
+//returns new id for enemy
 int Game::get_new_enemy_id(){
-    // std::cout << "NEW ID RECEIVED: " << enemies.size() << std::endl;
     return enemies.size();
 }
+
+//returns new id for projectile
 int Game::get_new_projectile_id(){
     return projectiles.size();
 }
 
-//adds an object to the list of gameobjects
+//adds an object to the enemy-vector
 void Game::add_enemy(Enemy* obj){
     enemies.push_back(obj);
 }
+
+//adds an object to the projectile-vector
 void Game::add_projectile(Projectile* obj){
     projectiles.push_back(obj);
 }
@@ -277,16 +313,4 @@ void Game::remove_projectile(int id){
             break;
         }
     }
-}
-
-//increases the score by given amount
-void Game::update_score(int amount){
-    score += amount;
-    update_score_text();
-}
-
-//updates the score_text object
-void Game::update_score_text(){
-    std::string score_text_str = "Score: "+std::to_string(score);
-    score_text = TTF_CreateText(text_engine, score_font, score_text_str.c_str(), 0);
 }

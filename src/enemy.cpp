@@ -12,7 +12,7 @@ Enemy::Enemy(float x, float y, float w, float h, int speed, int damage, int heal
 }
 
 //update timer
-void Enemy::update(float& time){
+void Enemy::update(float time){
     if(destroy_timer > destroy_time){
         destroy();
         return;

@@ -8,7 +8,7 @@ class Projectile : public GameObject {
     public:
         Projectile();
         Projectile(float x, float y, float w, float h, float speed, float damage, std::string sprite, Game* game_manager);
-        void update(float& time) override;
+        void update(float time) override;
     
     private:
         int destroy_time = 5;

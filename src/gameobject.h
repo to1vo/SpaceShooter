@@ -16,7 +16,7 @@ class GameObject {
 
         GameObject();
         GameObject(float x, float y, float w, float h, std::string sprite, Game* game_manager, int id = 0);
-        virtual void update(float& time) = 0;
+        virtual void update(float time) = 0;
         Game* game_manager;
 };
 
