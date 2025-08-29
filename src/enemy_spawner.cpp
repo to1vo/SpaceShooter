@@ -15,13 +15,13 @@ EnemySpawner::EnemySpawner(int y, Game* game_manager){
 }
 
 void EnemySpawner::update(float time){
-    if(spawn_cooldown_timer > spawn_cooldown_time){
+    if(spawn_cooldown_timer >= spawn_cooldown_time){
         spawn_enemy();
         //reset the timer 
         spawn_cooldown_timer = 0;
+    } else {
+        spawn_cooldown_timer += time;
     }
-
-    spawn_cooldown_timer += time;
 }
 
 //instantiates and adds new enemy to enemy-vector of gamemanager

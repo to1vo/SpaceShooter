@@ -23,7 +23,6 @@ void Player::update(float time) {
 
 //updates the shooting cooldown timer
 void Player::increase_timer(float& time){
-    //62 times in second 
     if(shoot_cooldown_timer < shoot_cooldown){
         shoot_cooldown_timer += time;
     }

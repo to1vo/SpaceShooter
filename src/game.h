@@ -5,8 +5,8 @@
 
 #define SCREEN_WIDTH 480
 #define SCREEN_HEIGHT 350
-#define FPS 62
-#define DELTA_TIME (1/FPS)
+#define FPS 62.0
+#define DELTA_TIME (1.0/FPS)
 #define DELAY_MS 16
 
 #include <vector>
