@@ -16,18 +16,19 @@ SDL_Renderer* Game::renderer = nullptr;
 //returns the texture or if failed -> NULL
 SDL_Texture* Game::load_texture(const std::string& filename, SDL_Renderer* renderer) {
     SDL_Texture* texture;
-    char path[MAX_PATH];
-    GetModuleFileNameA(NULL, path, MAX_PATH);
-    std::filesystem::path exePath(path);
-    std::filesystem::path folder = exePath.parent_path();
-    std::string filepath = folder.string()+"/assets/"+filename+".png";
+    // char path[MAX_PATH];
+    // GetModuleFileNameA(NULL, path, MAX_PATH);
+    // std::filesystem::path exePath(path);
+    // std::filesystem::path folder = exePath.root_directory();
+    // std::string filepath = folder.string()+"/resources/images/"+filename+".png";
+    std::string filepath = "../resources/images/"+filename+".png";
 
     std::cout << "LOADING A TEXTURE " << filepath << std::endl;
 
     texture = IMG_LoadTexture(renderer, filepath.data());
 
     if(texture == NULL){
-        std::cout << "Failed to load texture";
+        std::cout << "Failed to load texture" << std::endl;
         return NULL;
     }
 
@@ -98,11 +99,15 @@ void Game::init_sdl(){
 //initializes the game
 void Game::init(){  
     //open the font(s)
-    score_font = TTF_OpenFont("fonts/VT323-Regular.ttf", 30);
-    if(!score_font){
+    score_font = TTF_OpenFont("../resources/fonts/VT323-Regular.ttf", 30);
+    gameover_font = TTF_OpenFont("../resources/fonts/VT323-Regular.ttf", 60);
+    if(!score_font || !gameover_font){
         std::cout << "Failed to open font"; 
         exit(1);
-    } 
+    }
+    
+    //set the gameover text
+    gameover_text = TTF_CreateText(text_engine, gameover_font, "GAMEOVER", 0);
     
     //initializing the player
     //first 4 keys for movement last one for action
@@ -127,21 +132,12 @@ void Game::init(){
 //the main game loop
 void Game::game_loop(){
     while(true){
-        //GAME_OVER CHECKING SHOULD BE MOVED TO UPDATE!!
-        //GAME_LOOP SHOULD STAY THE SAME!!
-        if(!game_over){
-            clear_renderer();
-            read_input();
-            update();
-            draw();
-            update_renderer();        
-            SDL_Delay(DELAY_MS);  
-
-            continue;
-        } 
-
+        clear_renderer();
         read_input();
-        SDL_Delay(DELAY_MS);
+        update();
+        draw();
+        update_renderer();        
+        SDL_Delay(DELAY_MS);  
     }
 }
 
@@ -202,6 +198,12 @@ void Game::update_renderer(){
 
 //update the states of gameobjects
 void Game::update(){
+    if(game_over){
+        if(key_is_pressed(SDLK_RETURN)){
+            reset();
+        }
+        return;
+    }
     //player
     player.update(DELTA_TIME);
     
@@ -220,6 +222,10 @@ void Game::update(){
 }
 
 void Game::draw(){
+    if(game_over){
+        TTF_DrawRendererText(gameover_text, SCREEN_WIDTH/3.3, SCREEN_HEIGHT/3);
+        return;
+    }
     //player
     draw_sprite(&player);
     
@@ -264,14 +270,30 @@ void Game::set_game_over(){
     game_over = true;
 }
 
-// TODO
-//sets the game back to initial state
+//clears/resets everything
+//back to initial-state
 void Game::reset(){
+    //DELETE THE FONT/TEXT POINTERS
+    std::cout << "RESETING" << std::endl;
     // score = 0;
-    // enemies.clear();
-    // projectiles.clear();
+    // clear_enemies();
+    // clear_projectiles();
+    // keys_pressed.clear();
+    // game_over = false;
+    // init();
 }
 
+void Game::clear_enemies(){
+    for(int i=(int)enemies.size(); i>-1; i--){
+        remove_enemy(enemies[i]->id);
+    }
+}
+
+void Game::clear_projectiles(){
+    for(int i=(int)projectiles.size(); i>-1; i--){
+        remove_projectile(projectiles[i]->id);
+    }
+}
 
 //returns new id for enemy
 int Game::get_new_enemy_id(){

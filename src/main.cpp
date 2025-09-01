@@ -1,6 +1,6 @@
+// SpaceShooter
 // Toivo Lindholm 2025
 
-#include <iostream>
 #include <SDL3/SDL.h>
 #include "game.h"
 

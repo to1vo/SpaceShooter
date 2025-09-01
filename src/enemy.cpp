@@ -1,8 +1,8 @@
 // Toivo Lindholm 2025
 
 #include <iostream>
-#include "enemy.h"
-#include "game.h"
+#include "../include/enemy.h"
+#include "../include/game.h"
 
 Enemy::Enemy(float x, float y, float w, float h, int speed, int damage, int health, std::string sprite, Game* game_manager) : GameObject(x, y, w, h, sprite, game_manager, game_manager->get_new_enemy_id()){
     this->speed = speed;

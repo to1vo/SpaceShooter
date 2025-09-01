@@ -3,9 +3,9 @@
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
-#include "enemy_spawner.h"
-#include "enemy.h"
-#include "game.h"
+#include "../include/enemy_spawner.h"
+#include "../include/enemy.h"
+#include "../include/game.h"
 
 EnemySpawner::EnemySpawner(){};
 EnemySpawner::EnemySpawner(int y, Game* game_manager){

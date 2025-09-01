@@ -1,8 +1,8 @@
 // Toivo Lindholm 2025
 
 #include <iostream>
-#include "gameobject.h"
-#include "game.h"
+#include "../include/gameobject.h"
+#include "../include/game.h"
 
 GameObject::GameObject(){}
 GameObject::GameObject(float x, float y, float w, float h, std::string sprite, Game* game_manager, int id){

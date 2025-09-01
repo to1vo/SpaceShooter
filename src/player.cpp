@@ -1,10 +1,10 @@
 // Toivo Lindholm 2025
 
 #include <iostream>
-#include "player.h"
-#include "game.h"
-#include "projectile.h"
-#include "collision.h"
+#include "../include/player.h"
+#include "../include/game.h"
+#include "../include/projectile.h"
+#include "../include/collision.h"
 
 Player::Player(){}
 Player::Player(float x, float y, float w, float h, float speed, float maxHealth, std::string sprite, std::array<int, 5> keys, Game* game_manager) : GameObject(x, y, w, h, sprite, game_manager){

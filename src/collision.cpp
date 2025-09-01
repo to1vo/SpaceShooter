@@ -1,7 +1,7 @@
 // Toivo Lindholm 2025
 
 #include <iostream>
-#include "collision.h"
+#include "../include/collision.h"
 
 //checks the collision between two objects
 //returns the id of the object_2
