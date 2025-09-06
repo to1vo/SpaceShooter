@@ -2,12 +2,13 @@
 
 #ifndef PROJECTILE_H
 #define PROJECTILE_H
-#include "../include/gameobject.h"
+#include "gameobject.h"
 
 class Projectile : public GameObject {
     public:
         Projectile();
         Projectile(float x, float y, float w, float h, float speed, float damage, std::string sprite, Game* game_manager);
+        ~Projectile();
         void update(float time) override;
     
     private:

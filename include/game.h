@@ -8,6 +8,9 @@
 #define FPS 62.0
 #define DELTA_TIME (1.0/FPS)
 #define DELAY_MS 16
+#define STATE_MENU 0
+#define STATE_PLAY 1
+#define STATE_GAMEOVER 2
 
 #include <iostream>
 #include <vector>
@@ -23,14 +26,14 @@
 
 class Game {
     public:
-        static std::vector<SDL_Keycode> keys_pressed;
-        static SDL_Renderer* renderer;
-
-        std::vector<Enemy*> enemies;
-        std::vector<Projectile*> projectiles;
-        
+    static std::vector<SDL_Keycode> keys_pressed;
+    static SDL_Renderer* renderer;
+    
+    std::vector<Enemy*> enemies;
+    std::vector<Projectile*> projectiles;
+    
         Game();
-        void start();
+        void init();
         void set_game_over();
         void update_score(int amount);
         
@@ -51,10 +54,8 @@ class Game {
         void remove_gameobject(int id, std::vector<T*>& container){
             for(int i=(int)container.size()-1; i>-1; i--){
                 if(container[i]->id == id){
-                    SDL_DestroyTexture(container[i]->texture);
                     delete container[i];
                     container.erase(container.begin()+i);
-                    std::cout << "GAMEOBJECT DESTROYED" << std::endl;
                     break;
                 }
             }
@@ -63,37 +64,40 @@ class Game {
         static SDL_Texture* load_texture(const std::string& filename, SDL_Renderer* renderer);
         static bool key_is_pressed(const SDL_Keycode& keycode);
         static int get_key_position(const SDL_Keycode& keycode);
-
+        
     private:
         int score = 0;
-        bool game_over = false;
+        int game_state = STATE_MENU;
         SDL_Window* window;
         Player player;
         EnemySpawner enemy_spawner;
-        TTF_Font* score_font;
-        TTF_Font* gameover_font;
+        SDL_Texture* menu_bg_texture;
+        TTF_Font* font_big;
+        TTF_Font* font_medium;
         TTF_TextEngine* text_engine;
         TTF_Text* score_text;
         TTF_Text* gameover_text;
-
+        TTF_Text* menu_text;
+        TTF_Text* restart_text;
+        
+        void start();
         void init_sdl();
-        void init();
         void read_input();
         void handle_key_down(const SDL_Keycode& keycode);
         void handle_key_up(const SDL_Keycode& keycode);
         void clear_renderer();
         void update_renderer();
         void draw();
-        void draw_sprite(GameObject* obj);
+        void draw_texture(SDL_Texture* texture, int x, int y, int w, int h);
         void update();
         void game_loop();
         void update_score_text();
         void reset();
-
+        
         template <typename T>
         void clear_container(std::vector<T*>& container){
             for(int i=(int)container.size(); i>-1; i--){
-               remove_gameobject(container[i]->id);
+               remove_gameobject(container[i]->id, container);
             }
         }
 };

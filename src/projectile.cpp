@@ -12,6 +12,12 @@ Projectile::Projectile(float x, float y, float w, float h, float speed, float da
     std::cout << "PROJECTILE CREATED" << std::endl;
 }
 
+Projectile::~Projectile(){
+    std::cout << "PROJECTILE DESTROYED";
+    SDL_DestroyTexture(texture);
+    texture = nullptr;
+}
+
 void Projectile::update(float time){
     if(destroy_timer >= destroy_time){
         destroy();

@@ -11,6 +11,12 @@ Enemy::Enemy(float x, float y, float w, float h, int speed, int damage, int heal
     std::cout << "ENEMY CREATED" << std::endl;
 }
 
+Enemy::~Enemy(){
+    std::cout << "ENEMY DESTROYED" << std::endl;
+    SDL_DestroyTexture(texture);    
+    texture = nullptr;
+}
+
 //update timer
 void Enemy::update(float time){
     if(destroy_timer > destroy_time){

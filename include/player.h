@@ -5,7 +5,7 @@
 #include <string>
 #include <array>
 #include <SDL3/SDL.h>
-#include "../include/gameobject.h"
+#include "gameobject.h"
 
 class Player : public GameObject {
     public:
@@ -17,6 +17,7 @@ class Player : public GameObject {
     private:
         float speed, health, maxHealth, shoot_cooldown_timer = 1;
         int shoot_cooldown = 1;
+        bool moving_horizontally = false;
         std::array<int, 5> keys;
 
         void check_movement_keys();

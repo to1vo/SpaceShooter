@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <filesystem>
 #include <SDL3/SDL_init.h>
+#include <SDL3/SDL_video.h>
 #include <SDL3_image/SDL_image.h>
 #include "game.h"
 
@@ -60,29 +61,38 @@ int Game::get_key_position(const SDL_Keycode& keycode){
 
 Game::Game(){}
 
-void Game::start(){
-    std::cout << "Game started" << std::endl;
+void Game::init(){
+    std::cout << "Initializing the game..." << std::endl;
+
     init_sdl();
-    init();
+
+    std::cout << "Loading fonts..." << std::endl;
+
+    //open the font(s)
+    font_medium = TTF_OpenFont("../resources/fonts/VT323-Regular.ttf", 30);
+    font_big = TTF_OpenFont("../resources/fonts/VT323-Regular.ttf", 60);
+    if(!font_medium || !font_big){
+        std::cout << "Failed to open font"; 
+        exit(1);
+    }
+    
+    //set up the menu
+    menu_bg_texture = load_texture("menu-background", renderer);
+    menu_text = TTF_CreateText(text_engine, font_medium, "Press Enter To Start", 0);
+
+    gameover_text = TTF_CreateText(text_engine, font_big, "GAMEOVER", 0);
+    restart_text = TTF_CreateText(text_engine, font_medium, "Press Enter To Restart", 0);
+    score_text = TTF_CreateText(text_engine, font_medium, "Score: 0", 0);
+
+    start();
+
     game_loop();
 }
 
 //initializes SDL
 void Game::init_sdl(){
-    window = SDL_CreateWindow("Space Game", SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+    window = SDL_CreateWindow("Space Shooter", SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     Game::renderer = SDL_CreateRenderer(window, NULL);
-    
-    if(SDL_Init(SDL_INIT_VIDEO) < 0){
-        std::cout << "Couldn't initialize video";
-        exit(1);
-    }
-    
-    if(!TTF_Init()){
-        std::cout << "Failed to initialize SDL_TTF";
-        exit(1);
-    }
-
-    text_engine = TTF_CreateRendererTextEngine(renderer);
     
     if(window == nullptr){
         std::cout << "Failed to create window";
@@ -93,22 +103,27 @@ void Game::init_sdl(){
         std::cout << "Failed to create renderer";
         exit(1);
     }
-}
-
-//initializes the game
-void Game::init(){  
-    //open the font(s)
-    score_font = TTF_OpenFont("../resources/fonts/VT323-Regular.ttf", 30);
-    gameover_font = TTF_OpenFont("../resources/fonts/VT323-Regular.ttf", 60);
-    if(!score_font || !gameover_font){
-        std::cout << "Failed to open font"; 
+    
+    //just a placeholder for now
+    if(!SDL_SetWindowIcon(window, IMG_Load("../resources/images/rectangle-red.png"))){
+        std::cout << "Failed to set the window icon" << std::endl;
+    }
+    
+    if(SDL_Init(SDL_INIT_VIDEO) < 0){
+        std::cout << "Couldn't initialize video";
         exit(1);
     }
     
-    //set the gameover text
-    gameover_text = TTF_CreateText(text_engine, gameover_font, "GAMEOVER", 0);
+    if(!TTF_Init()){
+        std::cout << "Failed to initialize SDL_TTF";
+        exit(1);
+    }
     
-    //initializing the player
+    text_engine = TTF_CreateRendererTextEngine(renderer);    
+}
+
+void Game::start(){
+    //create the player
     //first 4 keys for movement last one for action
     std::array<int, 5> player_keys = {SDLK_W, SDLK_A, SDLK_S, SDLK_D, SDLK_SPACE};
     int player_x = SCREEN_WIDTH/2;
@@ -118,14 +133,12 @@ void Game::init(){
     int player_speed = 3;
     int player_maxhealth = 100;
     std::string player_sprite = "rectangle";
-
+    
     player = Player(player_x, player_y, player_width, player_height, player_speed, 
     player_maxhealth, "rectangle", player_keys, this);
     
     int enemy_spawner_y = -40;
     enemy_spawner = EnemySpawner(enemy_spawner_y, this);
-
-    update_score_text();
 }
 
 //the main game loop
@@ -197,7 +210,14 @@ void Game::update_renderer(){
 
 //update the states of gameobjects
 void Game::update(){
-    if(game_over){
+    if(game_state == STATE_MENU){
+        if(key_is_pressed(SDLK_RETURN)){
+            game_state = STATE_PLAY;
+        }
+        return;
+    }
+
+    if(game_state == STATE_GAMEOVER){
         if(key_is_pressed(SDLK_RETURN)){
             reset();
         }
@@ -211,47 +231,57 @@ void Game::update(){
     enemy_spawner.update(DELTA_TIME);
     
     //projectiles
-    for(int i=0; i<projectiles.size(); i++){
+    for(int i=(int)projectiles.size()-1; i>-1; i--){
         projectiles[i]->update(DELTA_TIME);
     }
     
     //enemies
-    for(int i=0; i<enemies.size(); i++){
+    for(int i=(int)enemies.size()-1; i>-1; i--){
         enemies[i]->update(DELTA_TIME);
     }
 }
 
 void Game::draw(){
-    if(game_over){
-        TTF_DrawRendererText(gameover_text, SCREEN_WIDTH/3.3, SCREEN_HEIGHT/3);
+    if(game_state == STATE_MENU){
+        draw_texture(menu_bg_texture, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        TTF_DrawRendererText(menu_text, SCREEN_WIDTH/4, SCREEN_HEIGHT-100);
         return;
     }
+
+    if(game_state == STATE_GAMEOVER){
+        TTF_DrawRendererText(gameover_text, SCREEN_WIDTH/3.3, SCREEN_HEIGHT/3);
+        TTF_DrawRendererText(restart_text, SCREEN_WIDTH/4, SCREEN_HEIGHT-160);
+        return;
+    }
+
     //player
-    draw_sprite(&player);
-    
+    draw_texture(player.texture, player.x, player.y, player.width, player.height);
+
     //enemies
-    for(int i=0; i<enemies.size(); i++){
-        draw_sprite(enemies[i]);
+    for(int i=(int)enemies.size()-1; i>-1; i--){
+        Enemy* enemy = enemies[i];
+        draw_texture(enemy->texture, enemy->x, enemy->y, enemy->width, enemy->height);
     }
 
     //projectiles
-    for(int i=0; i<projectiles.size(); i++){
-        draw_sprite(projectiles[i]);
+    for(int i=(int)projectiles.size()-1; i>-1; i--){
+        Projectile* projectile = projectiles[i];
+        draw_texture(projectile->texture, projectile->x, projectile->y, projectile->width, projectile->height);
     }
 
     //UI
-    TTF_DrawRendererText(score_text, SCREEN_WIDTH-125, 20);
+    TTF_DrawRendererText(score_text, SCREEN_WIDTH-150, 20);
 }
 
-//draws a single gameobject
-void Game::draw_sprite(GameObject* obj){
-    SDL_FRect dest; 
-    dest.x = obj->x;
-    dest.y = obj->y;
-    dest.w = obj->width;
-    dest.h = obj->height;
-    
-    SDL_RenderTexture(Game::renderer, obj->texture, NULL, &dest);
+//draws the given texture
+void Game::draw_texture(SDL_Texture* texture, int x, int y, int w, int h){
+    SDL_FRect dest;
+    dest.x = x;
+    dest.y = y;
+    dest.w = w;
+    dest.h = h;
+
+    SDL_RenderTexture(Game::renderer, texture, NULL, &dest);
 }
 
 //increases the score by given amount
@@ -263,22 +293,24 @@ void Game::update_score(int amount){
 //updates the score_text with current score
 void Game::update_score_text(){
     std::string score_text_str = "Score: "+std::to_string(score);
-    score_text = TTF_CreateText(text_engine, score_font, score_text_str.c_str(), 0);
+    TTF_DestroyText(score_text);
+    score_text = TTF_CreateText(text_engine, font_medium, score_text_str.c_str(), 0);
 }
 
 void Game::set_game_over(){
-    game_over = true;
+    //set the gameover state
+    game_state = STATE_GAMEOVER;
 }
 
 //clears/resets everything
 //back to initial-state
 void Game::reset(){
-    //DELETE THE FONT/TEXT POINTERS
-    std::cout << "RESETING" << std::endl;
-    // score = 0;
-    // clear_enemies();
-    // clear_projectiles();
-    // keys_pressed.clear();
-    // game_over = false;
-    // init();
+    std::cout << "RESETTING THE GAME" << std::endl;
+    clear_container(enemies);
+    clear_container(projectiles);
+    keys_pressed.clear();
+    score = 0;
+    update_score_text();
+    game_state = STATE_PLAY;
+    start();
 }

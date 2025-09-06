@@ -51,17 +51,26 @@ void Player::check_movement_keys(){
     if(Game::key_is_pressed(keys[0])){
         move_up();
     }
-    //up
+
+    //left
     if(Game::key_is_pressed(keys[1])){
+        moving_horizontally = true;
         move_left();
+    } else {
+        moving_horizontally = false;
     }
+
     //down
     if(Game::key_is_pressed(keys[2])){
         move_down();
     }
+
     //right
     if(Game::key_is_pressed(keys[3])){
+        moving_horizontally = true;
         move_right();
+    } else {
+        moving_horizontally = false;
     }
 }
 
@@ -98,7 +107,7 @@ void Player::take_damage(int amount){
     }
 }
 
-//instantiates and adds projectile to the projectile vector of game_manager
+//instantiates a projectile to its container
 //x and y positions come from player's position
 void Player::shoot(){
     if(can_shoot()){
