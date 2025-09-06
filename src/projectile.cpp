@@ -6,7 +6,7 @@
 #include "collision.h"
 
 Projectile::Projectile(){}
-Projectile::Projectile(float x, float y, float w, float h, float speed, float damage, std::string sprite, Game* game_manager) : GameObject(x, y, w, h, sprite, game_manager, game_manager->get_new_projectile_id()){
+Projectile::Projectile(float x, float y, float w, float h, float speed, float damage, std::string sprite, Game* game_manager) : GameObject(x, y, w, h, sprite, game_manager, game_manager->get_new_object_id(game_manager->projectiles)){
     this->speed = speed;
     this->damage = damage;
     std::cout << "PROJECTILE CREATED" << std::endl;
@@ -42,5 +42,5 @@ void Projectile::move_up(){
 
 //remove this projectile
 void Projectile::destroy(){
-    game_manager->remove_projectile(id);
+    game_manager->remove_gameobject(id, game_manager->projectiles);
 }

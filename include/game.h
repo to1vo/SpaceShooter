@@ -9,6 +9,7 @@
 #define DELTA_TIME (1.0/FPS)
 #define DELAY_MS 16
 
+#include <iostream>
 #include <vector>
 #include <array>
 #include <string>
@@ -31,14 +32,34 @@ class Game {
         Game();
         void start();
         void set_game_over();
-        int get_new_enemy_id();
-        int get_new_projectile_id();
-        void add_enemy(Enemy* obj);
-        void add_projectile(Projectile* obj);
-        void remove_enemy(int id);
-        void remove_projectile(int id);
         void update_score(int amount);
-
+        
+        //return new id for the object
+        template <typename T>
+        int get_new_object_id(std::vector<T*>& container){
+            return int(container.size());
+        }
+        
+        //adds an object to the given container
+        template <typename T>
+        void add_gameobject(T* obj, std::vector<T*>& container){
+            container.push_back(obj);
+        }
+        
+        //removes object by id from given container
+        template <typename T>
+        void remove_gameobject(int id, std::vector<T*>& container){
+            for(int i=(int)container.size()-1; i>-1; i--){
+                if(container[i]->id == id){
+                    SDL_DestroyTexture(container[i]->texture);
+                    delete container[i];
+                    container.erase(container.begin()+i);
+                    std::cout << "GAMEOBJECT DESTROYED" << std::endl;
+                    break;
+                }
+            }
+        }
+        
         static SDL_Texture* load_texture(const std::string& filename, SDL_Renderer* renderer);
         static bool key_is_pressed(const SDL_Keycode& keycode);
         static int get_key_position(const SDL_Keycode& keycode);
@@ -67,9 +88,14 @@ class Game {
         void update();
         void game_loop();
         void update_score_text();
-        void clear_enemies();
-        void clear_projectiles();
         void reset();
+
+        template <typename T>
+        void clear_container(std::vector<T*>& container){
+            for(int i=(int)container.size(); i>-1; i--){
+               remove_gameobject(container[i]->id);
+            }
+        }
 };
 
 #endif

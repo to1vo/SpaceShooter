@@ -1,10 +1,10 @@
 // Toivo Lindholm 2025
 
 #include <iostream>
-#include "../include/player.h"
-#include "../include/game.h"
-#include "../include/projectile.h"
-#include "../include/collision.h"
+#include "player.h"
+#include "game.h"
+#include "projectile.h"
+#include "collision.h"
 
 Player::Player(){}
 Player::Player(float x, float y, float w, float h, float speed, float maxHealth, std::string sprite, std::array<int, 5> keys, Game* game_manager) : GameObject(x, y, w, h, sprite, game_manager){
@@ -40,7 +40,7 @@ void Player::check_collisions(){
 
         if(enemy_id != -1){
             take_damage(game_manager->enemies[i]->damage);
-            game_manager->remove_enemy(enemy_id);
+            game_manager->remove_gameobject(enemy_id, game_manager->enemies);
         }
     }
 }
@@ -110,7 +110,7 @@ void Player::shoot(){
         int enemy_dmg = 50;
         std::string enemy_sprite = "rectangle-green";
 
-        game_manager->add_projectile(new Projectile(x, y, enemy_width, enemy_height, enemy_speed, enemy_dmg, enemy_sprite, game_manager));
+        game_manager->add_gameobject(new Projectile(x, y, enemy_width, enemy_height, enemy_speed, enemy_dmg, enemy_sprite, game_manager), game_manager->projectiles);
 
         shoot_cooldown_timer = 0;
     }

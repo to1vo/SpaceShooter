@@ -3,9 +3,9 @@
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
-#include "../include/enemy_spawner.h"
-#include "../include/enemy.h"
-#include "../include/game.h"
+#include "enemy_spawner.h"
+#include "enemy.h"
+#include "game.h"
 
 EnemySpawner::EnemySpawner(){};
 EnemySpawner::EnemySpawner(int y, Game* game_manager){
@@ -36,5 +36,5 @@ void EnemySpawner::spawn_enemy(){
     int enemy_health = 100;
     std::string enemy_sprite = "rectangle-red";
 
-    game_manager->add_enemy(new Enemy(enemy_x, y, enemy_width, enemy_height, enemy_speed, enemy_dmg, enemy_health, enemy_sprite, game_manager));       
+    game_manager->add_gameobject(new Enemy(enemy_x, y, enemy_width, enemy_height, enemy_speed, enemy_dmg, enemy_health, enemy_sprite, game_manager), game_manager->enemies);       
 }

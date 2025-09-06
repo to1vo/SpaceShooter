@@ -1,6 +1,5 @@
 // Toivo Lindholm 2025
 
-#include <iostream>
 #include <windows.h>
 #include <filesystem>
 #include <SDL3/SDL_init.h>
@@ -204,6 +203,7 @@ void Game::update(){
         }
         return;
     }
+
     //player
     player.update(DELTA_TIME);
     
@@ -229,14 +229,14 @@ void Game::draw(){
     //player
     draw_sprite(&player);
     
-    //projectiles
-    for(int i=0; i<projectiles.size(); i++){
-        draw_sprite(projectiles[i]);
-    }
-    
     //enemies
     for(int i=0; i<enemies.size(); i++){
         draw_sprite(enemies[i]);
+    }
+
+    //projectiles
+    for(int i=0; i<projectiles.size(); i++){
+        draw_sprite(projectiles[i]);
     }
 
     //UI
@@ -281,58 +281,4 @@ void Game::reset(){
     // keys_pressed.clear();
     // game_over = false;
     // init();
-}
-
-void Game::clear_enemies(){
-    for(int i=(int)enemies.size(); i>-1; i--){
-        remove_enemy(enemies[i]->id);
-    }
-}
-
-void Game::clear_projectiles(){
-    for(int i=(int)projectiles.size(); i>-1; i--){
-        remove_projectile(projectiles[i]->id);
-    }
-}
-
-//returns new id for enemy
-int Game::get_new_enemy_id(){
-    return enemies.size();
-}
-
-//returns new id for projectile
-int Game::get_new_projectile_id(){
-    return projectiles.size();
-}
-
-//adds an object to the enemy-vector
-void Game::add_enemy(Enemy* obj){
-    enemies.push_back(obj);
-}
-
-//adds an object to the projectile-vector
-void Game::add_projectile(Projectile* obj){
-    projectiles.push_back(obj);
-}
-
-void Game::remove_enemy(int id){
-    for(int i=(int)enemies.size()-1; i > -1; i--){
-        if(enemies[i]->id == id){
-            delete enemies[i];
-            enemies.erase(enemies.begin()+i);
-            std::cout << "ENEMY DESTROYED" << std::endl;
-            break;
-        }
-    }
-}
-
-void Game::remove_projectile(int id){
-    for(int i=(int)projectiles.size()-1; i > -1; i--){
-        if(projectiles[i]->id == id){
-            delete projectiles[i];
-            projectiles.erase(projectiles.begin()+i);
-            std::cout << "PROJECTILE DESTROYED" << std::endl;
-            break;
-        }
-    }
 }
