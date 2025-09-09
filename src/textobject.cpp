@@ -9,20 +9,16 @@ TextObject::TextObject(TTF_TextEngine* text_engine, float x, float y, std::strin
     this->y = y;
     this->value = value;
     this->font = font;
+    this->text_engine = text_engine;
     this->text = TTF_CreateText(text_engine, font, value.c_str(), 0);
-}
-
-TextObject::~TextObject(){
-    std::cout << "TEXTOBJECT DESTROYED" << std::endl;
-    // TTF_DestroyText(text);
-    // text = nullptr;
 }
 
 void TextObject::draw_textobject(){
     TTF_DrawRendererText(text, x, y);
 }
 
-void TextObject::update_value(std::string new_value){
+//update the text value
+void TextObject::update_value(const std::string& new_value){
     TTF_DestroyText(text);
     text = TTF_CreateText(text_engine, font, new_value.c_str(), 0);
 }

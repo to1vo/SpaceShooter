@@ -98,7 +98,7 @@ class Game {
         
         template <typename T>
         void clear_container(std::vector<T*>& container){
-            for(int i=(int)container.size(); i>-1; i--){
+            for(int i=(int)container.size()-1; i>-1; i--){
                remove_gameobject(container[i]->id, container);
             }
         }

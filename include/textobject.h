@@ -9,18 +9,17 @@ class TextObject {
     public:
         TextObject(TTF_TextEngine* text_engine, float x, float y, std::string value, TTF_Font* font);
         TextObject();
-        ~TextObject();
         void draw_textobject();
-        void update_value(std::string new_value);
+        void update_value(const std::string& new_value);
 
     protected:
         float x, y;
     
     private:
-        TTF_TextEngine* text_engine = nullptr;
-        TTF_Text* text = nullptr;
+        TTF_TextEngine* text_engine;
+        TTF_Text* text;
         std::string value;
-        TTF_Font* font = nullptr;
+        TTF_Font* font;
 };
 
 #endif

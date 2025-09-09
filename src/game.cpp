@@ -92,16 +92,13 @@ void Game::init(){
 
 //initializes SDL
 void Game::init_sdl(){
-    window = SDL_CreateWindow("Space Shooter", SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+    window = SDL_CreateWindow("Space Shooter", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);
+    // window = SDL_CreateWindow("Space Shooter", 0, 0, SDL_WINDOW_FULLSCREEN);
     Game::renderer = SDL_CreateRenderer(window, NULL);
+
     
     if(window == nullptr){
         std::cout << "Failed to create window";
-        exit(1);
-    }
-    
-    if(Game::renderer == nullptr){
-        std::cout << "Failed to create renderer";
         exit(1);
     }
     
@@ -109,6 +106,17 @@ void Game::init_sdl(){
     if(!SDL_SetWindowIcon(window, IMG_Load("../resources/images/rectangle-red.png"))){
         std::cout << "Failed to set the window icon" << std::endl;
     }
+
+    if(Game::renderer == nullptr){
+        std::cout << "Failed to create renderer";
+        exit(1);
+    }
+
+    if(!SDL_SetRenderLogicalPresentation(Game::renderer, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_LOGICAL_PRESENTATION_LETTERBOX)){
+        std::cout << "Failed to set LogicalPresentation mode" << std::endl;
+        exit(1);
+    }
+    
     
     if(SDL_Init(SDL_INIT_VIDEO) < 0){
         std::cout << "Couldn't initialize video";
