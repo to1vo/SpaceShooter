@@ -92,8 +92,8 @@ void Game::init(){
 
 //initializes SDL
 void Game::init_sdl(){
-    window = SDL_CreateWindow("Space Shooter", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);
-    // window = SDL_CreateWindow("Space Shooter", 0, 0, SDL_WINDOW_FULLSCREEN);
+    // window = SDL_CreateWindow("Space Shooter", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);
+    window = SDL_CreateWindow("Space Shooter", 0, 0, SDL_WINDOW_FULLSCREEN);
     Game::renderer = SDL_CreateRenderer(window, NULL);
 
     
@@ -112,12 +112,11 @@ void Game::init_sdl(){
         exit(1);
     }
 
-    if(!SDL_SetRenderLogicalPresentation(Game::renderer, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_LOGICAL_PRESENTATION_LETTERBOX)){
+    if(!SDL_SetRenderLogicalPresentation(Game::renderer, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_LOGICAL_PRESENTATION_INTEGER_SCALE)){
         std::cout << "Failed to set LogicalPresentation mode" << std::endl;
         exit(1);
     }
-    
-    
+        
     if(SDL_Init(SDL_INIT_VIDEO) < 0){
         std::cout << "Couldn't initialize video";
         exit(1);
@@ -141,10 +140,10 @@ void Game::start(){
     int player_height = 32;
     int player_speed = 3;
     int player_maxhealth = 100;
-    std::string player_sprite = "rectangle";
+    std::string player_sprite = "player";
     
     player = Player(player_x, player_y, player_width, player_height, player_speed, 
-    player_maxhealth, "rectangle", player_keys, this);
+    player_maxhealth, player_sprite, player_keys, this);
     
     int enemy_spawner_y = -40;
     enemy_spawner = EnemySpawner(enemy_spawner_y, this);

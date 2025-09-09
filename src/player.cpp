@@ -113,13 +113,13 @@ void Player::shoot(){
     if(can_shoot()){
         std::cout << "SHOOTING" << std::endl;
 
-        int enemy_width = 3;
-        int enemy_height = 8;
-        int enemy_speed = 7;
-        int enemy_dmg = 50;
-        std::string enemy_sprite = "rectangle-green";
+        int projectile_width = 3;
+        int projectile_height = 8;
+        int projectile_speed = 7;
+        int projectile_dmg = 50;
+        std::string projectile_sprite = "laser";
 
-        game_manager->add_gameobject(new Projectile(x, y, enemy_width, enemy_height, enemy_speed, enemy_dmg, enemy_sprite, game_manager), game_manager->projectiles);
+        game_manager->add_gameobject(new Projectile(x, y, projectile_width, projectile_height, projectile_speed, projectile_dmg, projectile_sprite, game_manager), game_manager->projectiles);
 
         shoot_cooldown_timer = 0;
     }

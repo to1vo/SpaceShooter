@@ -34,7 +34,7 @@ void EnemySpawner::spawn_enemy(){
     int enemy_speed = 2;
     int enemy_dmg = 50;
     int enemy_health = 100;
-    std::string enemy_sprite = "rectangle-red";
+    std::string enemy_sprite = "meteorite";
 
     game_manager->add_gameobject(new Enemy(enemy_x, y, enemy_width, enemy_height, enemy_speed, enemy_dmg, enemy_health, enemy_sprite, game_manager), game_manager->enemies);       
 }
