@@ -78,11 +78,12 @@ void Game::init(){
     
     //set up the menu
     menu_bg_texture = load_texture("menu-background", renderer);
-    menu_text = TTF_CreateText(text_engine, font_medium, "Press Enter To Start", 0);
-
-    gameover_text = TTF_CreateText(text_engine, font_big, "GAMEOVER", 0);
-    restart_text = TTF_CreateText(text_engine, font_medium, "Press Enter To Restart", 0);
-    score_text = TTF_CreateText(text_engine, font_medium, "Score: 0", 0);
+    
+    //create all textobjects for the game
+    menu_text = AnimatedTextObject(text_engine, SCREEN_WIDTH/4, SCREEN_HEIGHT-100, "Press Enter To Start", font_medium, 0.5, 15, 15);
+    gameover_text = TextObject(text_engine, SCREEN_WIDTH/3.3, SCREEN_HEIGHT/3, "GAMEOVER", font_big);
+    restart_text = TextObject(text_engine, SCREEN_WIDTH/4, SCREEN_HEIGHT-160, "Press Enter To Restart", font_medium);
+    score_text = TextObject(text_engine, SCREEN_WIDTH-130, 20, "Score: 0", font_medium);
 
     start();
 
@@ -211,6 +212,7 @@ void Game::update_renderer(){
 //update the states of gameobjects
 void Game::update(){
     if(game_state == STATE_MENU){
+        menu_text.animate(DELTA_TIME);
         if(key_is_pressed(SDLK_RETURN)){
             game_state = STATE_PLAY;
         }
@@ -244,13 +246,13 @@ void Game::update(){
 void Game::draw(){
     if(game_state == STATE_MENU){
         draw_texture(menu_bg_texture, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-        TTF_DrawRendererText(menu_text, SCREEN_WIDTH/4, SCREEN_HEIGHT-100);
+        menu_text.draw_textobject();
         return;
     }
 
     if(game_state == STATE_GAMEOVER){
-        TTF_DrawRendererText(gameover_text, SCREEN_WIDTH/3.3, SCREEN_HEIGHT/3);
-        TTF_DrawRendererText(restart_text, SCREEN_WIDTH/4, SCREEN_HEIGHT-160);
+        gameover_text.draw_textobject();
+        restart_text.draw_textobject();
         return;
     }
 
@@ -260,7 +262,7 @@ void Game::draw(){
     //enemies
     for(int i=(int)enemies.size()-1; i>-1; i--){
         Enemy* enemy = enemies[i];
-        draw_texture(enemy->texture, enemy->x, enemy->y, enemy->width, enemy->height);
+        draw_texture(enemy->texture, enemy->x, enemy->y, enemy->width, enemy->height, enemy->angle);
     }
 
     //projectiles
@@ -270,18 +272,19 @@ void Game::draw(){
     }
 
     //UI
-    TTF_DrawRendererText(score_text, SCREEN_WIDTH-150, 20);
+    score_text.draw_textobject();
 }
 
 //draws the given texture
-void Game::draw_texture(SDL_Texture* texture, int x, int y, int w, int h){
+void Game::draw_texture(SDL_Texture* texture, int x, int y, int w, int h, float angle){
     SDL_FRect dest;
     dest.x = x;
     dest.y = y;
     dest.w = w;
     dest.h = h;
 
-    SDL_RenderTexture(Game::renderer, texture, NULL, &dest);
+    SDL_RenderTextureRotated(Game::renderer, texture, NULL, &dest, angle, NULL, SDL_FLIP_NONE);
+    // SDL_RenderTexture(Game::renderer, texture, NULL, &dest);
 }
 
 //increases the score by given amount
@@ -292,9 +295,8 @@ void Game::update_score(int amount){
 
 //updates the score_text with current score
 void Game::update_score_text(){
-    std::string score_text_str = "Score: "+std::to_string(score);
-    TTF_DestroyText(score_text);
-    score_text = TTF_CreateText(text_engine, font_medium, score_text_str.c_str(), 0);
+    std::string str = "Score: "+std::to_string(score);
+    score_text.update_value(str);
 }
 
 void Game::set_game_over(){

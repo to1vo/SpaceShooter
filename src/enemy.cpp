@@ -23,6 +23,7 @@ void Enemy::update(float time){
         destroy();
         return;
     }
+    angle += 0.8;
     move();
     destroy_timer += time;
 }

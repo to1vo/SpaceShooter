@@ -6,12 +6,13 @@
 
 class Enemy : public GameObject {
     public:
+        int damage;
+        
         Enemy(float x, float y, float w, float h, int speed, int damage, int health, std::string sprite, Game* game_manager);
         ~Enemy(); 
         void update(float time) override;
         void take_damage(int amount);
 
-        int damage;
     private:
         int speed, health; 
         int destroy_time = 10;

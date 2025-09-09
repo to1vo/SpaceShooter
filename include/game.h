@@ -23,14 +23,16 @@
 #include "enemy_spawner.h"
 #include "enemy.h"
 #include "projectile.h"
+#include "textobject.h"
+#include "animated_textobject.h"
 
 class Game {
     public:
-    static std::vector<SDL_Keycode> keys_pressed;
-    static SDL_Renderer* renderer;
+        static std::vector<SDL_Keycode> keys_pressed;
+        static SDL_Renderer* renderer;
     
-    std::vector<Enemy*> enemies;
-    std::vector<Projectile*> projectiles;
+        std::vector<Enemy*> enemies;
+        std::vector<Projectile*> projectiles;
     
         Game();
         void init();
@@ -75,10 +77,10 @@ class Game {
         TTF_Font* font_big;
         TTF_Font* font_medium;
         TTF_TextEngine* text_engine;
-        TTF_Text* score_text;
-        TTF_Text* gameover_text;
-        TTF_Text* menu_text;
-        TTF_Text* restart_text;
+        TextObject score_text;
+        TextObject gameover_text;
+        AnimatedTextObject menu_text;
+        TextObject restart_text;
         
         void start();
         void init_sdl();
@@ -88,7 +90,7 @@ class Game {
         void clear_renderer();
         void update_renderer();
         void draw();
-        void draw_texture(SDL_Texture* texture, int x, int y, int w, int h);
+        void draw_texture(SDL_Texture* texture, int x, int y, int w, int h, float angle = 0);
         void update();
         void game_loop();
         void update_score_text();

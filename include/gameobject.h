@@ -9,7 +9,7 @@ class Game;
 
 class GameObject {
     public:
-        float x, y, width, height;
+        float x, y, width, height, angle = 0;
         int id;
         SDL_Texture* texture;
         std::string sprite;
