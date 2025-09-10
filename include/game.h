@@ -8,9 +8,6 @@
 #define FPS 62.0
 #define DELTA_TIME (1.0/FPS)
 #define DELAY_MS 16
-#define STATE_MENU 0
-#define STATE_PLAY 1
-#define STATE_GAMEOVER 2
 
 #include <iostream>
 #include <vector>
@@ -28,6 +25,13 @@
 
 class Game {
     public:
+        enum GameState {
+            gamestate_menu, 
+            gamestate_play, 
+            gamestate_gameover, 
+            gamestate_pause
+        };
+
         static std::vector<SDL_Keycode> keys_pressed;
         static SDL_Renderer* renderer;
     
@@ -69,7 +73,8 @@ class Game {
         
     private:
         int score = 0;
-        int game_state = STATE_MENU;
+        int gamestate = GameState::gamestate_menu;
+        bool pause_key_pressed = false;
         SDL_Window* window;
         Player player;
         EnemySpawner enemy_spawner;

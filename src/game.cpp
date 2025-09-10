@@ -210,6 +210,9 @@ void Game::handle_key_up(const SDL_Keycode& keycode){
     //if it exists
     if(index != -1){
         Game::keys_pressed.erase(Game::keys_pressed.begin()+index);
+        if(keycode == SDLK_ESCAPE){
+            pause_key_pressed = false;
+        }
         // std::cout << event.key << std::endl;
     }
 }
@@ -225,20 +228,37 @@ void Game::update_renderer(){
 
 //update the states of gameobjects
 void Game::update(){
-    if(game_state == STATE_MENU){
+    if(gamestate == gamestate_menu){
         menu_text.animate(DELTA_TIME);
         if(key_is_pressed(SDLK_RETURN)){
-            game_state = STATE_PLAY;
+            gamestate = gamestate_play;
         }
         return;
     }
 
-    if(game_state == STATE_GAMEOVER){
+    if(gamestate == gamestate_gameover){
         if(key_is_pressed(SDLK_RETURN)){
             reset();
         }
         return;
     }
+
+    if(gamestate == gamestate_pause){
+        std::cout << "GAME IS ON PAUSE" << std::endl;
+        if(key_is_pressed(SDLK_ESCAPE) && !pause_key_pressed){
+            gamestate = gamestate_play;
+            pause_key_pressed = true;
+        }
+        return;
+    }
+
+    //pause menu on
+    if(key_is_pressed(SDLK_ESCAPE) && !pause_key_pressed){
+        // gamestate = gamestate == gamestate_play ? gamestate_pause : gamestate_play;
+        gamestate = gamestate_pause;
+        pause_key_pressed = true;
+    }
+
 
     //player
     player.update(DELTA_TIME);
@@ -258,16 +278,20 @@ void Game::update(){
 }
 
 void Game::draw(){
-    if(game_state == STATE_MENU){
+    if(gamestate == gamestate_menu){
         draw_texture(menu_bg_texture, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         menu_text.draw_textobject();
         return;
     }
 
-    if(game_state == STATE_GAMEOVER){
+    if(gamestate == gamestate_gameover){
         gameover_text.draw_textobject();
         restart_text.draw_textobject();
         return;
+    }
+
+    if(gamestate == gamestate_pause){
+        //TODO
     }
 
     //player
@@ -315,7 +339,7 @@ void Game::update_score_text(){
 
 void Game::set_game_over(){
     //set the gameover state
-    game_state = STATE_GAMEOVER;
+    gamestate = gamestate_gameover;
 }
 
 //clears/resets everything
@@ -327,6 +351,6 @@ void Game::reset(){
     keys_pressed.clear();
     score = 0;
     update_score_text();
-    game_state = STATE_PLAY;
+    gamestate = gamestate_play;
     start();
 }
