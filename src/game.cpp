@@ -26,6 +26,9 @@ SDL_Texture* Game::load_texture(const std::string& filename, SDL_Renderer* rende
     std::cout << "LOADING A TEXTURE " << filepath << std::endl;
 
     texture = IMG_LoadTexture(renderer, filepath.data());
+    
+    //enable nerest neighbour scaling to avoid blurrines when scaling
+    SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
 
     if(texture == NULL){
         std::cout << "Failed to load texture" << std::endl;
@@ -92,38 +95,42 @@ void Game::init(){
 
 //initializes SDL
 void Game::init_sdl(){
-    // window = SDL_CreateWindow("Space Shooter", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);
-    window = SDL_CreateWindow("Space Shooter", 0, 0, SDL_WINDOW_FULLSCREEN);
-    Game::renderer = SDL_CreateRenderer(window, NULL);
-
+    window = SDL_CreateWindow("Space Shooter", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);
+    // window = SDL_CreateWindow("Space Shooter", 0, 0, SDL_WINDOW_FULLSCREEN);
     
     if(window == nullptr){
         std::cout << "Failed to create window";
         exit(1);
     }
-    
-    //just a placeholder for now
+
     if(!SDL_SetWindowIcon(window, IMG_Load("../resources/images/rectangle-red.png"))){
         std::cout << "Failed to set the window icon" << std::endl;
     }
 
+    if(!SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1")){
+        std::cout << "Failed to enable VSYNC" << std::endl;
+    }
+
+    Game::renderer = SDL_CreateRenderer(window, NULL);
+    
     if(Game::renderer == nullptr){
         std::cout << "Failed to create renderer";
         exit(1);
-    }
+    }    
 
-    if(!SDL_SetRenderLogicalPresentation(Game::renderer, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_LOGICAL_PRESENTATION_INTEGER_SCALE)){
-        std::cout << "Failed to set LogicalPresentation mode" << std::endl;
+    //set the game dimensions to fixed size
+    if(!SDL_SetRenderLogicalPresentation(Game::renderer, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_LOGICAL_PRESENTATION_LETTERBOX)){
+        std::cout << "Failed to set LogicalPresentation" << std::endl;
         exit(1);
     }
         
     if(SDL_Init(SDL_INIT_VIDEO) < 0){
-        std::cout << "Couldn't initialize video";
+        std::cout << "Failed initialize video" << std::endl;
         exit(1);
     }
     
     if(!TTF_Init()){
-        std::cout << "Failed to initialize SDL_TTF";
+        std::cout << "Failed to initialize SDL_TTF" << std::endl;
         exit(1);
     }
     
