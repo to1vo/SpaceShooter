@@ -6,6 +6,8 @@
 
 class Projectile : public GameObject {
     public:
+        static int projectile_count;
+
         Projectile();
         Projectile(float x, float y, float w, float h, float speed, float damage, std::string sprite, Game* game_manager);
         ~Projectile();

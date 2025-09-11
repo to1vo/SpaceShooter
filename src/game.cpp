@@ -79,9 +79,10 @@ void Game::init(){
         exit(1);
     }
     
-    //set up the menu
-    menu_bg_texture = load_texture("menu-background", renderer);
-    
+    //set up some textures
+    menu_texture = load_texture("menu", renderer);
+    background_texture = load_texture("menu-background", renderer);
+
     //create all textobjects for the game
     menu_text = AnimatedTextObject(text_engine, SCREEN_WIDTH/4, SCREEN_HEIGHT-100, "Press Enter To Start", font_medium, 0.5, 15, 15);
     gameover_text = TextObject(text_engine, SCREEN_WIDTH/3.3, SCREEN_HEIGHT/3, "GAMEOVER", font_big);
@@ -278,15 +279,18 @@ void Game::update(){
 }
 
 void Game::draw(){
-    if(gamestate == gamestate_menu){
-        draw_texture(menu_bg_texture, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-        menu_text.draw_textobject();
-        return;
-    }
-
     if(gamestate == gamestate_gameover){
         gameover_text.draw_textobject();
         restart_text.draw_textobject();
+        return;
+    }
+
+    //background
+    draw_texture(background_texture, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    if(gamestate == gamestate_menu){
+        draw_texture(menu_texture, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        menu_text.draw_textobject();
         return;
     }
 
@@ -348,6 +352,8 @@ void Game::reset(){
     std::cout << "RESETTING THE GAME" << std::endl;
     clear_container(enemies);
     clear_container(projectiles);
+    Enemy::enemy_count = 0;
+    Projectile::projectile_count = 0;
     keys_pressed.clear();
     score = 0;
     update_score_text();

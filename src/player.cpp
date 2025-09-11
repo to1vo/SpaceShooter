@@ -35,7 +35,7 @@ bool Player::can_shoot(){
 void Player::check_collisions(){
     int enemy_id;
 
-    for(int i=game_manager->enemies.size()-1; i>-1; i--){
+    for(int i=(int)game_manager->enemies.size()-1; i>-1; i--){
         enemy_id = Collision::is_colliding(*this, *game_manager->enemies[i]);
 
         if(enemy_id != -1){

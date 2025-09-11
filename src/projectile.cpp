@@ -5,15 +5,19 @@
 #include "game.h"
 #include "collision.h"
 
+int Projectile::projectile_count = 0;
+
 Projectile::Projectile(){}
-Projectile::Projectile(float x, float y, float w, float h, float speed, float damage, std::string sprite, Game* game_manager) : GameObject(x, y, w, h, sprite, game_manager, game_manager->get_new_object_id(game_manager->projectiles)){
+Projectile::Projectile(float x, float y, float w, float h, float speed, float damage, std::string sprite, Game* game_manager) : GameObject(x, y, w, h, sprite, game_manager, Projectile::projectile_count){
+    Projectile::projectile_count++;
+
     this->speed = speed;
     this->damage = damage;
     std::cout << "PROJECTILE CREATED" << std::endl;
 }
 
 Projectile::~Projectile(){
-    std::cout << "PROJECTILE DESTROYED";
+    std::cout << "PROJECTILE DESTROYED" << std::endl;
     SDL_DestroyTexture(texture);
     texture = nullptr;
 }
@@ -27,12 +31,14 @@ void Projectile::update(float time){
     
     //check collision with enemies
     if(game_manager->enemies.size() != 0){
-        for(int i=game_manager->enemies.size()-1; i>-1; i--){
+        for(int i=(int)game_manager->enemies.size()-1; i>-1; i--){
             int enemy_id = Collision::is_colliding(*this, *game_manager->enemies[i]);
+            
             if(enemy_id != -1){
                 game_manager->enemies[i]->take_damage(damage);
                 game_manager->update_score(10);      
                 destroy();  
+                break;
             }    
         }
     }

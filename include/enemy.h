@@ -6,6 +6,8 @@
 
 class Enemy : public GameObject {
     public:
+        static int enemy_count;
+        
         int damage;
         
         Enemy(float x, float y, float w, float h, int speed, int damage, int health, std::string sprite, Game* game_manager);

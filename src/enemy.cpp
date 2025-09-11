@@ -4,15 +4,25 @@
 #include "enemy.h"
 #include "game.h"
 
-Enemy::Enemy(float x, float y, float w, float h, int speed, int damage, int health, std::string sprite, Game* game_manager) : GameObject(x, y, w, h, sprite, game_manager, game_manager->get_new_object_id(game_manager->enemies)){
+int Enemy::enemy_count = 0;
+
+Enemy::Enemy(float x, float y, float w, float h, int speed, int damage, int health, std::string sprite, Game* game_manager) : GameObject(x, y, w, h, sprite, game_manager, Enemy::enemy_count){
+    Enemy::enemy_count++;
+
     this->speed = speed;
     this->damage = damage;
     this->health = health;
+
     std::cout << "ENEMY CREATED" << std::endl;
+    
+    std::cout << "ENEMIES" << std::endl;
+    for(int i=0; i<game_manager->enemies.size(); i++){
+        std::cout << game_manager->enemies[i]->id << std::endl;
+    }
 }
 
 Enemy::~Enemy(){
-    std::cout << "ENEMY DESTROYED" << std::endl;
+    std::cout << "ENEMY DESTROYED" << std::endl; 
     SDL_DestroyTexture(texture);    
     texture = nullptr;
 }

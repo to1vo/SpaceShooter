@@ -43,12 +43,6 @@ class Game {
         void set_game_over();
         void update_score(int amount);
         
-        //return new id for the object
-        template <typename T>
-        int get_new_object_id(std::vector<T*>& container){
-            return int(container.size());
-        }
-        
         //adds an object to the given container
         template <typename T>
         void add_gameobject(T* obj, std::vector<T*>& container){
@@ -78,7 +72,8 @@ class Game {
         SDL_Window* window;
         Player player;
         EnemySpawner enemy_spawner;
-        SDL_Texture* menu_bg_texture;
+        SDL_Texture* menu_texture;
+        SDL_Texture* background_texture;
         TTF_Font* font_big;
         TTF_Font* font_medium;
         TTF_TextEngine* text_engine;
