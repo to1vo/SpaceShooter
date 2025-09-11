@@ -11,4 +11,4 @@ The idea of this project for me was to learn more about C++, libraries like SDL3
 - Sounds
 - Animations?
 
-Toivo Lindholm
+Toivo Lindholm 2025
