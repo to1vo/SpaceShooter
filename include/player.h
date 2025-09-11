@@ -15,8 +15,8 @@ class Player : public GameObject {
         void take_damage(int amount);
 
     private:
-        float speed, health, maxHealth, shoot_cooldown_timer = 1;
-        int shoot_cooldown = 1;
+        float speed, health, maxHealth, shoot_cooldown_timer = 0.3;
+        float shoot_cooldown = 0.3;
         bool moving_horizontally = false;
         std::array<int, 5> keys;
 
