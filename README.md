@@ -7,8 +7,7 @@ The idea of this project for me was to learn more about C++, libraries like SDL3
 ## Updates
 - Refactoring + bug fixing
 - Highscore/save system
-- Sprites
+- Settings menu
 - Sounds
-- Animations?
 
 Toivo Lindholm 2025
